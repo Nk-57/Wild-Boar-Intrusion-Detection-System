@@ -14,7 +14,7 @@ The system detects motion using PIR sensors. When animal movement is detected, i
 
 ## Components Used
 
-* Arduino Microcontroller
+* ESP Microcontroller
 * PIR Motion Sensor
 * Solar Power Supply
 * Buzzer / Speaker
