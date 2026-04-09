@@ -1,0 +1,53 @@
+#include <SPI.h>
+#include <LoRa.h>
+
+#define BUZZER_PIN 14
+
+void setup() {
+
+  Serial.begin(115200);
+
+  pinMode(BUZZER_PIN, OUTPUT);
+
+  LoRa.setPins(5, 17, 16);
+
+  if (!LoRa.begin(433E6)) {
+    Serial.println("LoRa Init Failed");
+    while (1);
+  }
+
+  Serial.println("Farmer Node Ready");
+}
+
+void loop() {
+
+  int packetSize = LoRa.parsePacket();
+
+  if (packetSize) {
+
+    String incoming = "";
+
+    while (LoRa.available()) {
+      incoming += (char)LoRa.read();
+    }
+
+    Serial.print("Received: ");
+    Serial.println(incoming);
+
+    if (incoming == "BOAR_ALERT") {
+
+      alertFarmer();
+    }
+  }
+}
+
+void alertFarmer() {
+
+  Serial.println("Intrusion Alert!");
+
+  digitalWrite(BUZZER_PIN, HIGH);
+
+  delay(3000);
+
+  digitalWrite(BUZZER_PIN, LOW);
+}
