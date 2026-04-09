@@ -1,1 +1,277 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Village Node Control Panel</title>
+
+<style>
+
+/* ===== GLOBAL STYLE ===== */
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+}
+
+/* ===== HEADER ===== */
+
+.header {
+    background: #020617;
+    padding: 15px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+/* ===== CONTAINER ===== */
+
+.container {
+    padding: 20px;
+}
+
+/* ===== STATUS CARDS ===== */
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.card h3 {
+    margin-top: 0;
+}
+
+/* ===== STATUS COLORS ===== */
+
+.status-ok {
+    color: #22c55e;
+    font-weight: bold;
+}
+
+.status-alert {
+    color: #ef4444;
+    font-weight: bold;
+}
+
+.status-idle {
+    color: #facc15;
+    font-weight: bold;
+}
+
+/* ===== BUTTON ===== */
+
+.button {
+    margin-top: 15px;
+    padding: 12px;
+    width: 100%;
+    background: #ef4444;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: #dc2626;
+}
+
+/* ===== LOG ===== */
+
+.log-box {
+    margin-top: 20px;
+    background: #020617;
+    padding: 15px;
+    border-radius: 10px;
+    height: 200px;
+    overflow-y: scroll;
+    font-size: 14px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+ Village Node Monitoring System
+</div>
+
+<div class="container">
+
+<div class="card-grid">
+
+<!-- SYSTEM STATUS -->
+
+<div class="card">
+<h3>System Status</h3>
+<p id="systemStatus" class="status-ok">
+ONLINE
+</p>
+</div>
+
+<!-- MOTION STATUS -->
+
+<div class="card">
+<h3>Motion Detection</h3>
+<p id="motionStatus" class="status-idle">
+NO MOTION
+</p>
+</div>
+
+<!-- DETERRENT STATUS -->
+
+<div class="card">
+<h3>Deterrent</h3>
+<p id="deterrentStatus" class="status-idle">
+IDLE
+</p>
+
+<button class="button"
+onclick="manualTrigger()">
+
+Manual Trigger
+
+</button>
+
+</div>
+
+<!-- BATTERY STATUS -->
+
+<div class="card">
+<h3>Battery Level</h3>
+<p id="batteryStatus">
+87 %
+</p>
+</div>
+
+</div>
+
+<!-- EVENT LOG -->
+
+<div class="log-box"
+id="eventLog">
+
+System Started...
+
+</div>
+
+</div>
+
+<script>
+
+/* ===== SIMULATION VARIABLES ===== */
+
+let motion = false;
+let deterrentActive = false;
+
+/* ===== UPDATE LOOP ===== */
+
+setInterval(() => {
+
+    simulateSensor();
+
+}, 3000);
+
+/* ===== SENSOR SIMULATION ===== */
+
+function simulateSensor() {
+
+    motion = Math.random() > 0.7;
+
+    if (motion) {
+
+        updateMotion(true);
+        activateDeterrent();
+
+    }
+    else {
+
+        updateMotion(false);
+
+    }
+}
+
+/* ===== UPDATE MOTION UI ===== */
+
+function updateMotion(state) {
+
+    let motionText =
+        document.getElementById("motionStatus");
+
+    if (state) {
+
+        motionText.innerHTML = "MOTION DETECTED";
+        motionText.className = "status-alert";
+
+        addLog("⚠ Motion Detected");
+
+    }
+    else {
+
+        motionText.innerHTML = "NO MOTION";
+        motionText.className = "status-idle";
+
+    }
+}
+
+/* ===== ACTIVATE DETERRENT ===== */
+
+function activateDeterrent() {
+
+    let detText =
+        document.getElementById("deterrentStatus");
+
+    detText.innerHTML = "ACTIVE";
+    detText.className = "status-alert";
+
+    addLog("🚨 Deterrent Activated");
+
+    setTimeout(() => {
+
+        detText.innerHTML = "IDLE";
+        detText.className = "status-idle";
+
+    }, 4000);
+}
+
+/* ===== MANUAL BUTTON ===== */
+
+function manualTrigger() {
+
+    activateDeterrent();
+
+    addLog("Manual Trigger Activated");
+}
+
+/* ===== LOG FUNCTION ===== */
+
+function addLog(message) {
+
+    let log =
+        document.getElementById("eventLog");
+
+    let time =
+        new Date().toLocaleTimeString();
+
+    log.innerHTML +=
+        "<br>" + time + " - " + message;
+
+    log.scrollTop =
+        log.scrollHeight;
+}
+
+</script>
+
+</body>
+</html>
